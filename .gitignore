@@ -1,0 +1,9 @@
+# Executable
+/squasher
+
+# Nix
+/result
+
+vendor/
+# vendor/*
+# !vendor/modules.txt
