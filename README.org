@@ -1,0 +1,30 @@
+* Squasher
+This is a command line program that addresses very particular needs: squash Git commits that are automatically created (e.g. using [[https://github.com/ryuslash/git-auto-commit-mode][git-auto-commit-mode]] for Emacs).
+It squashes a consecutive sequence of commits that have the same commit message authored within a certain duration (e.g. 3 hours) into one commit.
+It starts from the next commit of =origin/BRANCH= where =BRANCH= is the name of the head branch, so pushing commits to remotes means they are finalized.
+
+This is useful for keeping the history less messy, while frequently backing up changes to the Git repository.
+** Installation
+It is a Go program, so you can build and install the program using Go.
+
+Alternatively, it is a Nix flake, so you can use the following command line to run the program:
+
+#+begin_src sh
+  nix run github:akirak/squasher -- --help
+#+end_src
+** Usage
+Synopsis:
+
+#+begin_src sh
+  squasher [--hours N] [DIR]
+#+end_src
+
+The directory is a path to a Git repository.
+If you omit the argument, it will be the current repository.
+
+=--hours= options specifies the duration threshold in hours.
+
+It rewrites the history of the head branch of a Git repository, so please use it with caution.
+If the repository is dirty, it aborts the opration.
+
+You could add it to a =pre-push= Git hook, for example.
