@@ -1,4 +1,6 @@
 * Squasher for Auto-Committed Git Repositories
+[[https://akirak.cachix.org][https://img.shields.io/badge/cachix-akirak-blue.svg]]
+
 This is a command line program that addresses a very particular need: squash Git commits that are automatically created (e.g. using [[https://github.com/ryuslash/git-auto-commit-mode][git-auto-commit-mode]] for Emacs).
 It squashes a consecutive sequence of commits that have the same commit message into one commit.
 It also checks the author time of each commit, so if a commit is not authored within a certain duration (e.g. three hours) since the first commit of the sequence, it is not squashed, even if it has the same commit message.
