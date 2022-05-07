@@ -2,6 +2,7 @@ package squash
 
 import (
 	"fmt"
+
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -15,7 +16,7 @@ type SquashContext struct {
 	BaseCommit plumbing.Hash
 }
 
-func OpenRepository(path string) (*SquashContext, error) {
+func OpenRepository(path string, base string) (*SquashContext, error) {
 	repo, openErr := git.PlainOpen(path)
 	if openErr != nil {
 		return nil, openErr
@@ -44,27 +45,39 @@ func OpenRepository(path string) (*SquashContext, error) {
 		return nil, configErr
 	}
 
-	remote := ""
-	branchConfig, branchConfigExists := config.Branches[branch]
-	if branchConfigExists {
-		remote = branchConfig.Remote
-	} else {
-		// go-git seems to have no API for retrieving
-		// remote.pushDefault, so use "origin" as the push default.
-		remote = "origin"
-	}
+	var parentHashPtr *plumbing.Hash = nil
 
-	remoteRef, remoteErr := repo.Reference(
-		plumbing.NewRemoteReferenceName(remote, branch), false)
-	if remoteErr != nil {
-		return nil, remoteErr
+	if base != "" {
+		// Check if the commit exists
+		commit, commitErr := repo.CommitObject(plumbing.NewHash(base))
+		if commitErr != nil {
+			return nil, commitErr
+		}
+		parentHashPtr = &commit.Hash
+	} else {
+		remote := ""
+		branchConfig, branchConfigExists := config.Branches[branch]
+		if branchConfigExists {
+			remote = branchConfig.Remote
+		} else {
+			// go-git seems to have no API for retrieving
+			// remote.pushDefault, so use "origin" as the push default.
+			remote = "origin"
+		}
+
+		remoteRef, remoteErr := repo.Reference(
+			plumbing.NewRemoteReferenceName(remote, branch), false)
+		if remoteErr != nil {
+			return nil, remoteErr
+		}
+		parentHash := remoteRef.Hash()
+		parentHashPtr = &parentHash
 	}
-	parentHash := remoteRef.Hash()
 
 	context := SquashContext{
 		Repository: repo,
 		Head:       head,
-		BaseCommit: parentHash,
+		BaseCommit: *parentHashPtr,
 	}
 
 	return &context, nil

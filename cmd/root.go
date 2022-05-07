@@ -11,9 +11,10 @@ import (
 )
 
 var hours float64
+var base string
 
 func RunSquash(path string) {
-	context, openErr := squash.OpenRepository(path)
+	context, openErr := squash.OpenRepository(path, base)
 	if openErr != nil {
 		log.Fatal(openErr)
 		return
@@ -73,4 +74,5 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().Float64Var(&hours, "hours", 3, "Maximum time span commits are squashed together")
+	rootCmd.Flags().StringVar(&base, "base", "", "Hash of a base commit")
 }
