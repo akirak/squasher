@@ -20,6 +20,9 @@ func IsRepoClean(r *git.Repository) (bool, error) {
 		return false, statusErr
 	}
 
+	// At present, IsClean() sometimes returns False, even if the repository
+	// is clean. This may be due to a cause described in the following
+	// ticket: https://github.com/go-git/go-git/issues/500
 	return status.IsClean(), nil
 }
 
