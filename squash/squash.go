@@ -2,6 +2,7 @@ package squash
 
 import (
 	"fmt"
+	"os/exec"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -17,18 +18,32 @@ type SquashContext struct {
 }
 
 func OpenRepository(path string, base string) (*SquashContext, error) {
+
+	// Due to a bug with go-git, gitutils.IsRepoClean does not always
+	// produce a correct result. Thus we will use git status command for
+	// now.
+	cmd := exec.Command("git", "status", "-s")
+	cmd.Dir = path
+	status, statusErr := cmd.Output()
+	if statusErr != nil {
+		return nil, fmt.Errorf("Non-zero exit from git status")
+	}
+	if string(status) != "" {
+		return nil, fmt.Errorf("Repository is not clean")
+	}
+
 	repo, openErr := git.PlainOpen(path)
 	if openErr != nil {
 		return nil, openErr
 	}
 
-	clean, cleanErr := gitutils.IsRepoClean(repo)
-	if cleanErr != nil {
-		return nil, cleanErr
-	}
-	if !clean {
-		return nil, fmt.Errorf("Repository is not clean")
-	}
+	// clean, cleanErr := gitutils.IsRepoClean(repo)
+	// if cleanErr != nil {
+	// 	return nil, cleanErr
+	// }
+	// if !clean {
+	// 	return nil, fmt.Errorf("Repository is not clean")
+	// }
 
 	head, headErr := repo.Head()
 	if headErr != nil {
