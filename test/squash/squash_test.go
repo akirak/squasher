@@ -290,3 +290,125 @@ func TestSquash3hours(t *testing.T) {
 		}
 	}
 }
+
+func TestSquash5hours(t *testing.T) {
+	fmt.Println("3h")
+
+	tmpDir, tmpDirError := ioutil.TempDir("", "squash-test")
+	defer os.RemoveAll(tmpDir)
+
+	if tmpDirError != nil {
+		t.Fatalf("Failed to create a temporary directory, %v", tmpDirError)
+	}
+
+	context, setupErr := Setup(tmpDir)
+	if setupErr != nil {
+		t.Fatal(setupErr)
+	}
+
+	fmt.Println("Before")
+	log1Out, log1Err := GitLog(tmpDir)
+	if log1Err != nil {
+		t.Fatal(log1Err)
+	}
+	fmt.Println(log1Out)
+
+	result, runErr := squash.Squash(context, 5)
+	if runErr != nil {
+		t.Fatal(runErr)
+	}
+	ref2 := plumbing.NewHashReference(context.Head.Name(), result.NewCommit)
+	context.Repository.Storer.SetReference(ref2)
+
+	fmt.Println("After")
+	log2Out, log2Err := GitLog(tmpDir)
+	if log2Err != nil {
+		t.Fatal(log2Err)
+	}
+	fmt.Println(log2Out)
+
+	commits, commitsErr := gitutils.GetCommitsBetween(context.Repository, result.NewCommit, context.BaseCommit)
+	if commitsErr != nil {
+		t.Fatal(commitsErr)
+	}
+
+	if len(commits) != 4 {
+		t.Errorf("len(commits) should be %d, but got %d", 4, len(commits))
+	}
+
+	if len(commits) > 0 {
+		if commits[0].Message != "test 1" {
+			t.Errorf("%s should be \"%s\", but got \"%s\"",
+				"commits[0].Message",
+				"test 1",
+				commits[0].Message)
+		}
+
+		if !commits[0].Author.When.Equal(startTime) {
+			t.Errorf("%s should be 0h0m0s, but got %s",
+				"commits[0].Author.When",
+				commits[0].Author.When.Sub(startTime).String(),
+			)
+		}
+	}
+
+	if len(commits) > 1 {
+		if commits[1].Message != "test 1" {
+			t.Errorf("%s should be \"%s\", but got \"%s\"",
+				"commits[1].Message",
+				"test 1",
+				commits[1].Message)
+		}
+
+		d, e := time.ParseDuration("6h0m0s")
+		if e != nil {
+			t.Error(e)
+		}
+		if !commits[1].Author.When.Equal(startTime.Add(d)) {
+			t.Errorf("%s should be 6h0m0s, but got %s",
+				"commits[1].Author.When",
+				commits[1].Author.When.Sub(startTime).String(),
+			)
+		}
+	}
+
+	if len(commits) > 2 {
+		if commits[2].Message != "test 2" {
+			t.Errorf("%s should be \"%s\", but got \"%s\"",
+				"commits[2].Message",
+				"test 2",
+				commits[2].Message)
+		}
+
+		d, e := time.ParseDuration("6h30m0s")
+		if e != nil {
+			t.Error(e)
+		}
+		if !commits[2].Author.When.Equal(startTime.Add(d)) {
+			t.Errorf("%s should be 6h30m0s, but got %s",
+				"commits[2].Author.When",
+				commits[2].Author.When.Sub(startTime).String(),
+			)
+		}
+	}
+
+	if len(commits) > 3 {
+		if commits[3].Message != "test 3" {
+			t.Errorf("%s should be \"%s\", but got \"%s\"",
+				"commits[3].Message",
+				"test 3",
+				commits[3].Message)
+		}
+
+		d, e := time.ParseDuration("8h0m0s")
+		if e != nil {
+			t.Error(e)
+		}
+		if !commits[3].Author.When.Equal(startTime.Add(d)) {
+			t.Errorf("%s should be 8h0m0s, but got %s",
+				"commits[3].Author.When",
+				commits[3].Author.When.Sub(startTime).String(),
+			)
+		}
+	}
+}
