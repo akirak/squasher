@@ -38,6 +38,9 @@
             # in the Nix store.
             src = ./.;
 
+            # Tests fail due to missing a git binary
+            doCheck = false;
+
             # This hash locks the dependencies of this package. It is
             # necessary because of how Go requires network access to resolve
             # VCS.  See https://www.tweag.io/blog/2021-03-04-gomod2nix/ for
