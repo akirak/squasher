@@ -20,11 +20,13 @@ Alternatively, you can use Nix with flakes enabled to run the program:
 Synopsis:
 
 #+begin_src sh
-  squasher [--hours N] [DIR]
+  squasher [--base SHA] [--hours N] [DIR]
 #+end_src
 
 It takes an optional positional argument, which should be a path to a Git repository.
 By default, it is the current repository.
+
+If =--base= is set, squashing starts from the commit instead of =origin/BRANCH=. You must give a full hash of a commit.
 
 =--hours= options specifies the duration threshold in hours.
 
