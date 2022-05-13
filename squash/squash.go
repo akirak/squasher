@@ -3,6 +3,7 @@ package squash
 import (
 	"fmt"
 	"os/exec"
+	"time"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -113,19 +114,15 @@ func Squash(context *SquashContext, thresholdInHours float64) (*SquashResult, er
 	}
 
 	currentCommit := commits[0]
-	time := currentCommit.Author.When
-	message := currentCommit.Message
 
 	num := 0
-	parentHash := context.BaseCommit
 	storer := context.Repository.Storer
 
 	for j := 0; j < len(commits); j++ {
-		newMessage := commits[j].Message
-		newTime := commits[j].Author.When
-		duration := newTime.Sub(time)
+		duration := commits[j].Author.When.Sub(currentCommit.Author.When)
 
-		isSquash := message == newMessage && duration.Hours() < thresholdInHours
+		isSquash := currentCommit.Message == commits[j].Message &&
+			duration.Hours() < thresholdInHours
 
 		newAuthor := currentCommit.Author
 		if !isSquash {
@@ -134,13 +131,13 @@ func Squash(context *SquashContext, thresholdInHours float64) (*SquashResult, er
 
 		parentHashes := currentCommit.ParentHashes
 		if !isSquash {
-			parentHashes = []plumbing.Hash{parentHash}
+			parentHashes = []plumbing.Hash{currentCommit.Hash}
 		}
 
 		committer := object.Signature{
 			Name:  newAuthor.Name,
 			Email: newAuthor.Email,
-			When:  time.Local(),
+			When:  time.Now(),
 		}
 
 		newCommit := object.Commit{
@@ -166,9 +163,6 @@ func Squash(context *SquashContext, thresholdInHours float64) (*SquashResult, er
 		currentCommit = newCommit
 
 		if !isSquash {
-			time = commits[j].Author.When
-			message = newMessage
-			parentHash = newHash
 			num += 1
 		}
 	}
