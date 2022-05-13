@@ -28,7 +28,7 @@ By default, it is the current repository.
 
 If =--base= is set, squashing starts from the commit instead of =origin/BRANCH=. You must give a full hash of a commit.
 
-=--hours= options specifies the duration threshold in hours.
+=--hours= option specifies the duration threshold in hours.
 
 It rewrites the history of the head branch of a Git repository, so please use it with caution.
 As a safety net, it checks the status of the repository and aborts the operation if it is not clean.
