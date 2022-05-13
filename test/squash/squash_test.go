@@ -169,23 +169,6 @@ func Setup(path string) (*squash.SquashContext, error) {
 	return &context, nil
 }
 
-func reverse(orig []object.Commit) []object.Commit {
-	result := make([]object.Commit, len(orig))
-	for i, j := 0, len(orig)-1; i <= j; i, j = i+1, j-1 {
-		result[i], result[j] = orig[j], orig[i]
-	}
-	return result
-}
-
-func GetCommits(repository *git.Repository,
-	start plumbing.Hash, openEnd plumbing.Hash) ([]object.Commit, error) {
-	commits, commitsErr := gitutils.GetCommitsBetween(repository, start, openEnd)
-	if commitsErr != nil {
-		return commits, commitsErr
-	}
-	return reverse(commits), nil
-}
-
 func TestSquash3hours(t *testing.T) {
 	fmt.Println("3h")
 
@@ -222,7 +205,7 @@ func TestSquash3hours(t *testing.T) {
 	}
 	fmt.Println(log2Out)
 
-	commits, commitsErr := GetCommits(context.Repository, result.NewCommit, context.BaseCommit)
+	commits, commitsErr := gitutils.GetCommitsBetween(context.Repository, result.NewCommit, context.BaseCommit)
 	if commitsErr != nil {
 		t.Fatal(commitsErr)
 	}

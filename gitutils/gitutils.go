@@ -26,6 +26,14 @@ func IsRepoClean(r *git.Repository) (bool, error) {
 	return status.IsClean(), nil
 }
 
+func reverse(orig []object.Commit) []object.Commit {
+	result := make([]object.Commit, len(orig))
+	for i, j := 0, len(orig)-1; i <= j; i, j = i+1, j-1 {
+		result[i], result[j] = orig[j], orig[i]
+	}
+	return result
+}
+
 func GetCommitsBetween(repository *git.Repository,
 	start plumbing.Hash, openEnd plumbing.Hash) ([]object.Commit, error) {
 	logOptions := git.LogOptions{
@@ -48,9 +56,9 @@ func GetCommitsBetween(repository *git.Repository,
 		return nil
 	})
 
-	if iterErr != nil && ! errors.Is(iterErr, logEnd) {
+	if iterErr != nil && !errors.Is(iterErr, logEnd) {
 		return nil, iterErr
 	}
 
-	return commits, nil
+	return reverse(commits), nil
 }

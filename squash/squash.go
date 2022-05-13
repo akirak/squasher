@@ -112,7 +112,7 @@ func Squash(context *SquashContext, thresholdInHours float64) (*SquashResult, er
 		return nil, logErr
 	}
 
-	currentCommit := commits[len(commits)-1]
+	currentCommit := commits[0]
 	time := currentCommit.Author.When
 	message := currentCommit.Message
 
@@ -120,7 +120,7 @@ func Squash(context *SquashContext, thresholdInHours float64) (*SquashResult, er
 	parentHash := context.BaseCommit
 	storer := context.Repository.Storer
 
-	for j := len(commits) - 1; j >= 0; j-- {
+	for j := 0; j < len(commits); j++ {
 		newMessage := commits[j].Message
 		newTime := commits[j].Author.When
 		duration := newTime.Sub(time)
