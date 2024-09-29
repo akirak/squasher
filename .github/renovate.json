@@ -15,6 +15,15 @@
     {
       "matchDatasources": ["github-actions"],
       "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["patch", "pin", "digest"],
+      "groupName": "Patches",
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["minor"],
+      "automerge": true
     }
   ],
   "lockFileMaintenance": {
