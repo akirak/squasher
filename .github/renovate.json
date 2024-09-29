@@ -9,26 +9,20 @@
   ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["lockFileMaintenance"],
-      "automerge": true
-    },
-    {
       "matchDatasources": ["github-actions"],
       "automerge": true
     },
     {
-      "matchUpdateTypes": ["patch", "pin", "digest"],
+      "matchUpdateTypes": ["patch", "pin", "digest", "minor", "lockFileMaintenance"],
       "groupName": "Patches",
-      "automerge": true
-    },
-    {
-      "matchUpdateTypes": ["minor"],
+      "schedule": [
+        "every month on the first day of the month"
+      ],
       "automerge": true
     }
   ],
   "lockFileMaintenance": {
-    "enabled": true,
-    "schedule": ["every month"]
+    "enabled": true
   },
   "github-actions": {
     "enabled": true
