@@ -47,9 +47,7 @@
           squasher = pkgs.buildGoModule {
             pname = "squasher";
             inherit version;
-            # In 'nix develop', we don't need a copy of the source tree
-            # in the Nix store.
-            src = ./.;
+            src = self.outPath;
 
             # Tests fail due to missing a git binary
             doCheck = false;
