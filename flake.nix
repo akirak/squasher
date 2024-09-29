@@ -49,8 +49,11 @@
             inherit version;
             src = self.outPath;
 
-            # Tests fail due to missing a git binary
-            doCheck = false;
+            doCheck = true;
+
+            nativeCheckInputs = [
+              pkgs.git
+            ];
 
             # This hash locks the dependencies of this package. It is
             # necessary because of how Go requires network access to resolve
