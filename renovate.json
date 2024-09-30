@@ -1,0 +1,32 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": ["config:recommended"],
+	"labels": ["automation", "dependencies"],
+	"packageRules": [
+		{
+			"matchDatasources": ["github-actions"],
+			"automerge": true
+		},
+		{
+			"matchUpdateTypes": [
+				"patch",
+				"pin",
+				"digest",
+				"minor",
+				"lockFileMaintenance"
+			],
+			"groupName": "Patches",
+			"schedule": ["every month on the first day of the month"],
+			"automerge": true
+		}
+	],
+	"lockFileMaintenance": {
+		"enabled": false
+	},
+	"github-actions": {
+		"enabled": true
+	},
+	"nix": {
+		"enabled": true
+	}
+}
