@@ -16,7 +16,7 @@
 				"lockFileMaintenance"
 			],
 			"groupName": "Patches",
-			"schedule": ["every month on the first day of the month"],
+			"schedule": ["before 4am on the first day of the month"],
 			"automerge": true
 		}
 	],
