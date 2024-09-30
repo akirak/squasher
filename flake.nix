@@ -1,7 +1,12 @@
 {
-  description = "Squash Git commits";
-
-  inputs.systems.url = "github:nix-systems/default";
+  inputs = {
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    systems.url = "github:nix-systems/default";
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
 
   nixConfig = {
     extra-substituters = [
@@ -15,76 +20,50 @@
   outputs =
     {
       self,
-      nixpkgs,
       systems,
-    }:
+      nixpkgs,
+      treefmt-nix,
+      ...
+    }@inputs:
     let
+      eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f nixpkgs.legacyPackages.${system});
 
-      # to work with older version of flakes
-      lastModifiedDate = self.lastModifiedDate or self.lastModified or "19700101";
+      treefmtEval = eachSystem (pkgs: treefmt-nix.lib.evalModule pkgs ./treefmt.nix);
 
-      # Generate a user-friendly version number.
-      version = builtins.substring 0 8 lastModifiedDate;
-
-      # Helper function to generate an attrset '{ x86_64-linux = f "x86_64-linux"; ... }'.
-      forAllSystems = nixpkgs.lib.genAttrs (import systems);
-
-      # Nixpkgs instantiated for supported system types.
-      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; });
-
+      lastModifiedDate = self.lastModifiedDate or "19700101";
     in
     {
+      packages = eachSystem (pkgs: rec {
+        default = squasher;
 
-      # Provide some binary packages for selected system types.
-      packages = forAllSystems (
-        system:
-        let
-          pkgs = nixpkgsFor.${system};
-        in
-        rec {
-          default = self.packages.${system}.squasher;
+        squasher = pkgs.buildGoModule {
+          pname = "squasher";
+          version = builtins.substring 0 8 lastModifiedDate;
+          src = self.outPath;
 
-          squasher = pkgs.buildGoModule {
-            pname = "squasher";
-            inherit version;
-            src = self.outPath;
+          doCheck = true;
+          nativeCheckInputs = [
+            pkgs.git
+          ];
 
-            doCheck = true;
+          vendorHash = "sha256-BdRC0HuyxnSInK3HqzLD3Q53VR0nS+QzfD0RmwmBwJI=";
+        };
 
-            nativeCheckInputs = [
-              pkgs.git
-            ];
+      });
 
-            # This hash locks the dependencies of this package. It is
-            # necessary because of how Go requires network access to resolve
-            # VCS.  See https://www.tweag.io/blog/2021-03-04-gomod2nix/ for
-            # details. Normally one can build with a fake sha256 and rely on native Go
-            # mechanisms to tell you what the hash should be or determine what
-            # it should be "out-of-band" with other tooling (eg. gomod2nix).
-            # To begin with it is recommended to set this, but one must
-            # remeber to bump this hash when your dependencies change.
-            # vendorSha256 = pkgs.lib.fakeSha256;
-            # vendorSha256 = null;
+      devShells = eachSystem (pkgs: {
+        default = pkgs.mkShell {
+          packages = [
+            pkgs.go
+            pkgs.gopls
+          ];
+        };
+      });
 
-            vendorHash = "sha256-BdRC0HuyxnSInK3HqzLD3Q53VR0nS+QzfD0RmwmBwJI=";
-          };
-        }
-      );
+      formatter = eachSystem (pkgs: treefmtEval.${pkgs.system}.config.build.wrapper);
 
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = nixpkgsFor.${system};
-        in
-        {
-          default = pkgs.mkShell {
-            buildInputs = [
-              pkgs.go
-              pkgs.gopls
-            ];
-          };
-        }
-      );
-
+      checks = eachSystem (pkgs: {
+        formatting = treefmtEval.${pkgs.system}.config.build.check self;
+      });
     };
 }
