@@ -18,6 +18,7 @@ jobs:
         with:
           extra_nix_config: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-      - run: |
+      - name: Check format
+        run: |
           system="$(nix eval --expr builtins.currentSystem --impure --raw)"
           nix build ".#checks.$system.formatting"
