@@ -46,7 +46,7 @@
             pkgs.git
           ];
 
-          vendorHash = "sha256-BdRC0HuyxnSInK3HqzLD3Q53VR0nS+QzfD0RmwmBwJI=";
+          vendorHash = "sha256-7g261Jf6Qegfz7MnNbqo3Jc5Ft33qHXvst92laOrIY0=";
         };
 
       });
