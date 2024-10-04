@@ -3,8 +3,16 @@
 	"extends": ["config:recommended"],
 	"labels": ["automation", "dependencies"],
 	"packageRules": [
+    {
+			"matchUpdateTypes": [
+				"lockFileMaintenance"
+			],
+			"groupName": "Maintenance",
+			"automerge": true
+    },
 		{
 			"matchDatasources": ["github-actions"],
+      "groupName": "actions",
 			"automerge": true
 		},
 		{
@@ -12,8 +20,7 @@
 				"patch",
 				"pin",
 				"digest",
-				"minor",
-				"lockFileMaintenance"
+				"minor"
 			],
 			"groupName": "Patches",
 			"schedule": ["before 4am on the first day of the month"],
@@ -21,7 +28,7 @@
 		}
 	],
 	"lockFileMaintenance": {
-		"enabled": false
+		"enabled": true
 	},
 	"github-actions": {
 		"enabled": true
