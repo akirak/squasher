@@ -6,6 +6,9 @@
     {
       "matchUpdateTypes": ["lockFileMaintenance"],
       "groupName": "Maintenance",
+      "extends": [
+        "schedule:earlyMondays"
+      ],
       "automerge": true
     },
     {
