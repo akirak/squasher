@@ -7,6 +7,18 @@
 
   # JSON
   programs.biome.enable = true;
+  programs.biome = {
+    includes = [ "renovate.json" ];
+    settings = {
+      json = {
+        formatter = {
+          indentStyle = "space";
+          indentWidth = 2;
+          lineEnding = "lf";
+        };
+      };
+    };
+  };
 
   # GitHub Actions
   programs.yamlfmt.enable = true;
