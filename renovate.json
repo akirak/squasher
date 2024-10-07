@@ -1,39 +1,32 @@
 {
-	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
-	"extends": ["config:recommended"],
-	"labels": ["automation", "dependencies"],
-	"packageRules": [
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "labels": ["automation", "dependencies"],
+  "packageRules": [
     {
-			"matchUpdateTypes": [
-				"lockFileMaintenance"
-			],
-			"groupName": "Maintenance",
-			"automerge": true
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "groupName": "Maintenance",
+      "automerge": true
     },
-		{
-			"matchDatasources": ["github-actions"],
+    {
+      "matchDatasources": ["github-actions"],
       "groupName": "actions",
-			"automerge": true
-		},
-		{
-			"matchUpdateTypes": [
-				"patch",
-				"pin",
-				"digest",
-				"minor"
-			],
-			"groupName": "Patches",
-			"schedule": ["before 4am on the first day of the month"],
-			"automerge": true
-		}
-	],
-	"lockFileMaintenance": {
-		"enabled": true
-	},
-	"github-actions": {
-		"enabled": true
-	},
-	"nix": {
-		"enabled": true
-	}
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["patch", "pin", "digest", "minor"],
+      "groupName": "Patches",
+      "schedule": ["before 4am on the first day of the month"],
+      "automerge": true
+    }
+  ],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "github-actions": {
+    "enabled": true
+  },
+  "nix": {
+    "enabled": true
+  }
 }
