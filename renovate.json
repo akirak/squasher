@@ -1,7 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
   "labels": ["automation", "dependencies"],
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests"
+  ],
   "packageRules": [
     {
       "matchUpdateTypes": ["lockFileMaintenance"],
@@ -10,8 +13,11 @@
       "automerge": true
     },
     {
-      "matchDatasources": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "actions",
+      "separateMajorMinor": false,
       "automerge": true
     },
     {
