@@ -1,15 +1,22 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "labels": ["automation", "dependencies"],
   "extends": [
     "config:recommended",
     "helpers:pinGitHubActionDigests"
   ],
+  "labels": [
+    "automation",
+    "dependencies"
+  ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["lockFileMaintenance"],
+      "matchUpdateTypes": [
+        "lockFileMaintenance"
+      ],
       "groupName": "Maintenance",
-      "extends": ["schedule:earlyMondays"],
+      "extends": [
+        "schedule:earlyMondays"
+      ],
       "automerge": true
     },
     {
@@ -21,13 +28,22 @@
       "automerge": true
     },
     {
-      "matchUpdateTypes": ["patch", "pin", "digest", "minor"],
+      "matchUpdateTypes": [
+        "patch",
+        "pin",
+        "digest",
+        "minor"
+      ],
       "groupName": "Patches",
-      "schedule": ["before 4am on the first day of the month"],
+      "schedule": [
+        "before 4am on the first day of the month"
+      ],
       "automerge": true
     }
   ],
-  "automergeSchedule": ["before 7pm"],
+  "automergeSchedule": [
+    "before 7pm"
+  ],
   "lockFileMaintenance": {
     "enabled": true
   },
