@@ -1,0 +1,4 @@
+interface:
+  display_name: "Update Nix Vendor Hash"
+  short_description: "Refresh buildGoModule vendorHash values"
+  default_prompt: "Use $update-nix-vendor-hash to refresh the vendorHash for this Go Nix package."
