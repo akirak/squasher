@@ -47,7 +47,7 @@
           ];
 
           # vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
-          vendorHash = "sha256-1F6GCvRm3H2CkxWj4WSfm1joCQ2vaIJ+FtiVP9FIAd0=";
+          vendorHash = "sha256-UbNmgB9bJaQqnwRWPGRpknHsiaI5Ki/5MfMwnCXcN0Q=";
         };
 
       });
