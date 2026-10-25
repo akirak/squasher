@@ -1,4 +1,9 @@
 name: Check format
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 on:
   pull_request:
     paths-ignore:
@@ -11,6 +16,7 @@ on:
   workflow_dispatch:
 jobs:
   check:
+    name: Check format
     permissions:
       contents: read
     runs-on: ubuntu-latest
